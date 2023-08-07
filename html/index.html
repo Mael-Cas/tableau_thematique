@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tableau Synoptique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 95%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .add-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .file-input {
+            display: none;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Tableau Synoptique</h1>
+    <div>
+        <button class="add-btn" onclick="document.getElementById('fileInput').click()">Ajouter un nouveau tableau</button>
+        <input type="file" id="fileInput" class="file-input" accept=".tbx" />
+    </div>
+</div>
+
+
+<script>
+    function parseTBXContent(content) {
+        const rows = content.trim().split('\n');
+        const headerRow = rows[0].split('|');
+        const tableData = rows.slice(1).map(row => {
+            const rowData = row.split('|');
+            return headerRow.reduce((acc, header, index) => {
+                const cellData = rowData[index].split('-').join('<br><br>-'); // Add line breaks before each dash
+                acc[header] = cellData;
+                return acc;
+            }, {});
+        });
+        return { headers: headerRow, data: tableData };
+    }
+
+    function createTable(headers, data, index) {
+        const table = document.createElement('table');
+        const headerRow = table.insertRow();
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.innerHTML = header;
+            headerRow.appendChild(th);
+        });
+
+        data.forEach(item => {
+            const row = table.insertRow();
+            headers.forEach(header => {
+                const cell = row.insertCell();
+                cell.innerHTML = item[header];
+            });
+
+            const deleteCell = row.insertCell();
+            const deleteButton = document.createElement('button');
+            deleteButton.innerText = 'Supprimer';
+            deleteButton.className = 'delete-btn';
+            deleteButton.addEventListener('click', () => deleteTable(index));
+            deleteCell.appendChild(deleteButton);
+        });
+
+        return table;
+    }
+
+    function displaySavedTable(headers, data, index) {
+        const table = createTable(headers, data, index);
+        const savedTablesContainer = document.querySelector('.container');
+        savedTablesContainer.appendChild(table);
+    }
+
+    // Charger les tableaux sauvegardés lors de l'ouverture de la page
+    fetch('/api/getSavedTables')  // Remplacez cela par la route correcte pour récupérer les tableaux sauvegardés depuis votre serveur
+        .then(response => response.json())
+        .then(savedTables => {
+            savedTables.forEach((table, index) => {
+                displaySavedTable(table.headers, table.data, index);
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des tableaux sauvegardés:', error);
+        });
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const content = event.target.result;
+            const { headers, data } = parseTBXContent(content);
+            const table = createTable(headers, data);
+            const container = document.querySelector('.container');
+            container.appendChild(table);
+
+            // Envoi des données du tableau au serveur
+            fetch('/api/saveTable', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ headers, data })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Tableau envoyé et sauvegardé avec succès.');
+                    } else {
+                        console.error('Erreur lors de l\'envoi du tableau au serveur:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'envoi du tableau au serveur:', error);
+                });
+        };
+
+        reader.readAsText(file);
+    });
+
+    function deleteTable(index) {
+        const table = document.querySelectorAll('table')[index];
+        if (table) {
+            table.remove();
+            fetch(`/api/deleteTable/${index}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Tableau supprimé avec succès.');
+                    } else {
+                        console.error('Erreur lors de la suppression du tableau:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression du tableau:', error);
+                });
+        }
+    }
+</script>
+</body>
+</html>

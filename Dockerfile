@@ -2,13 +2,13 @@
 FROM node:18
 
 # Définir le répertoire de travail dans le conteneur
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copier les fichiers package.json et package-lock.json pour installer les dépendances
-COPY package*.json ./
+COPY api/package*.json ./api/
 
-# Installer les dépendances
-RUN npm install
+# Installer les dépendances pour le dossier api
+RUN cd api && npm install
 
 # Copier tous les fichiers du répertoire actuel vers le répertoire de travail dans le conteneur
 COPY . .
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 10001
 
 # Démarrer l'application lorsque le conteneur est lancé
-CMD ["node", "app.js"]
+CMD ["node", "api/app.js"]

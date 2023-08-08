@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 10001
 
 # Démarrer l'application lorsque le conteneur est lancé
-CMD ["node", "api/app.js"]
+CMD ["node", "app.js"]

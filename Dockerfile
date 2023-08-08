@@ -10,8 +10,11 @@ COPY api/package*.json ./api/
 # Installer les dépendances pour le dossier api
 RUN cd api && npm install
 
+RUN cd /
+
 # Copier tous les fichiers du répertoire actuel vers le répertoire de travail dans le conteneur
-COPY api/* ./api/
+#copy api/* ./api/
+COPY . .
 
 # Exposer le port 10001
 EXPOSE 10001

@@ -11,10 +11,10 @@ COPY api/package*.json ./api/
 RUN cd api && npm install
 
 # Copier tous les fichiers du répertoire actuel vers le répertoire de travail dans le conteneur
-COPY . .
+COPY app/app
 
 # Exposer le port 10001
 EXPOSE 10001
 
 # Démarrer l'application lorsque le conteneur est lancé
-CMD ["node", "app.js"]
+CMD ["node", "api/index.js"]

@@ -7,6 +7,8 @@ const generateIndexHtml = require('./page/Index-get.js');
 
 const app = express();
 
+console.log(__dirname);
+
 app.use(express.json());
 
 app.get('/', async (req, res) => {

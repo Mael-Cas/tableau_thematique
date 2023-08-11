@@ -21,4 +21,4 @@ EXPOSE 10001
 RUN cd api
 
 # Démarrer l'application lorsque le conteneur est lancé
-CMD ["node", "index.js"]
+CMD ["node", "api/index.js"]

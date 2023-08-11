@@ -18,7 +18,6 @@ COPY . .
 # Exposer le port 10001
 EXPOSE 10001
 
-RUN cd api
 
 # Démarrer l'application lorsque le conteneur est lancé
 CMD ["node", "api/index.js"]

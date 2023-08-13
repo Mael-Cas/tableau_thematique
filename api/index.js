@@ -81,6 +81,10 @@ app.delete('/api/deleteTable/:index', async (req, res) => {
     }
 });
 
+app.get('/download', (req, res) => {
+    res.download('tableau.txt')
+})
+
 
 app.listen(PORT, () => {
     console.log(`Serveur démarré : http://localhost:${PORT}`);

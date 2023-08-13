@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf8">
     <title>Tableau Synoptique</title>
     <style>
         body {
@@ -43,6 +44,16 @@
             cursor: pointer;
         }
 
+        .down-btn{
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #192b99;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
         .file-input {
             display: none;
         }
@@ -53,15 +64,23 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        .btn-container{
+            display: flex;
+            justify-content: space-between;
+        }
 
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Tableau Synoptique</h1>
-    <div>
+    <div class="btn-container">
         <button class="add-btn" onclick="document.getElementById('fileInput').click()">Ajouter un nouveau tableau</button>
         <input type="file" id="fileInput" class="file-input" accept=".tbx" />
+        <form action="/download" method="get">
+            <button class="down-btn" onclick="getfile()">Télécharger les tableaux</button>
+        </form>
+
     </div>
 </div>
 
@@ -178,6 +197,13 @@
                     console.error('Erreur lors de la suppression du tableau:', error);
                 });
         }
+    }
+
+    function getfile() {
+        fetch('/download', {
+            method: 'GET'
+        })
+
     }
 </script>
 </body>

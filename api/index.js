@@ -82,7 +82,7 @@ app.delete('/api/deleteTable/:index', async (req, res) => {
 });
 
 app.get('/download', (req, res) => {
-    res.download('tableau.txt')
+    res.download('api/tableau.txt')
 })
 
 

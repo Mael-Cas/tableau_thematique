@@ -169,7 +169,15 @@
     }
 
     function displaySavedTable(headers, data, index) {
-        const table = createTable(headers, data, index);
+        const processedData = data.map(item => {
+            const processedItem = {};
+            for (const key in item) {
+                processedItem[key] = item[key].replace(/~/g, '<br><br>~').replace(/~/g, '-');
+            }
+            return processedItem;
+        });
+
+        const table = createTable(headers, processedData, index);
         const savedTablesContainer = document.querySelector('.container');
         savedTablesContainer.appendChild(table);
     }
@@ -203,7 +211,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ headers, data })
+                body: JSON.stringify({ headers, data: processDataForServer(data) })
             })
                 .then(response => {
                     if (response.ok) {

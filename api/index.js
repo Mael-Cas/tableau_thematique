@@ -28,7 +28,7 @@ app.get('/api/getSavedTables', async (req, res) => {
                 const rowData = row.split('|');
                 return headers.reduce((acc, header, index) => {
                     acc[header] = rowData[index];
-                    console.log(acc[header])
+
                     return acc;
                 }, {});
             });

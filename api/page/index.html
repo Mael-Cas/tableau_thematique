@@ -203,7 +203,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ headers, data: processDataForServer(data) })
+                body: JSON.stringify({ headers, data })
             })
                 .then(response => {
                     if (response.ok) {

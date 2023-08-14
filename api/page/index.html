@@ -92,7 +92,7 @@
         const tableData = rows.slice(1).map(row => {
             const rowData = row.split('|');
             return headerRow.reduce((acc, header, index) => {
-                const cellData = rowData[index].split('-').join('<br><br>-'); // Add line breaks before each dash
+                const cellData = rowData[index].split('~').join('<br><br>-'); // Add line breaks before each dash
                 acc[header] = cellData;
                 return acc;
             }, {});
